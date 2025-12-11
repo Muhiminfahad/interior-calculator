@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#f3f3f7" />
+
+  <title>Chowchala Interior Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 20px auto 40px;
+      padding: 0 15px;
+      background: #f3f3f7;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    h1 span.brand {
+      color: #c62828;
+      font-weight: 700;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .section-title {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: 700;
+      border-left: 4px solid #c62828;
+      padding-left: 8px;
+      color: #333;
+    }
+    .card {
+      background: #ffffff;
+      padding: 15px 20px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border-top: 3px solid #c62828;
+    }
+    .card.soft {
+      border-top-color: #424242;
+    }
+    .card.green {
+      border-top-color: #2e7d32;
+    }
+    .flex {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .flex > div {
+      flex: 1 1 160px;
+      min-width: 150px;
+    }
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+    }
+    input[type="number"], input[type="text"], input[type="date"], select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 5px 7px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    input[type="number"]:focus,
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #c62828;
+      box-shadow: 0 0 0 1px rgba(198,40,40,0.1);
+    }
+    .btn {
+      display: inline-block;
+      padding: 7px 14px;
+      margin: 5px 4px 0 0;
+      background: #c62828;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .btn.secondary {
+      background: #424242;
+    }
+    .btn.light {
+      background: #757575;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 5px 6px;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+      font-weight: 600;
+    }
+    .note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: #e0f2f1;
+      font-size: 11px;
+      color: #00695c;
+      margin-left: 4px;
+    }
+    .result-item {
+      margin: 3px 0;
+      font-size: 13px;
+    }
+    .highlight {
+      font-weight: 700;
+      color: #2e7d32;
+    }
+    .areaPer, .areaTotal {
+      font-weight: 600;
+      color: #424242;
+    }
+    hr {
+      margin: 10px 0;
+      border: none;
+      border-bottom: 1px dashed #bbb;
+    }
+    .amount {
+      font-weight: 700;
+      color: #c62828;
+    }
+
+    /* Nesting preview styles */
+    .sheetWrapper {
+      margin-bottom: 20px;
+    }
+    .sheetTitle {
+      font-size: 13px;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #444;
+    }
+    .sheetContainer {
+      position: relative;
+      border: 1px solid #999;
+      background: #fafafa;
+      overflow: hidden;
+    }
+    .sheetRect {
+      position: absolute;
+      border: 1px solid rgba(0,0,0,0.5);
+      box-sizing: border-box;
+      font-size: 10px;
+      padding: 2px;
+      overflow: hidden;
+    }
+    .legend {
+      font-size: 11px;
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .legend-color {
+      width: 14px;
+      height: 10px;
+      border: 1px solid #555;
+    }
+  
+    /* ===== Client / Cabinet Manager ===== */
+    .client-summary-box {
+      font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px dashed #ccc;
+      min-height: 40px;
+    }
+    .client-small-note {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .cabinet-list {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .cabinet-item {
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+    }
+    .cabinet-item-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+    }
+    .cabinet-tag {
+      color: #d35400;
+    }
+    .cabinet-type {
+      font-size: 11px;
+      color: #777;
+    }
+    .cabinet-meta {
+      font-size: 11px;
+      margin-top: 3px;
+      color: #555;
+    }
+
+
+    .cabinet-2d-wrapper {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed #ddd;
+    }
+
+    #cabinet2dCanvas {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      border-radius: 4px;
+    }
+
+    .small-note {
+      font-size: 11px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+  
+    .wh-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+    .swapWHBtn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0 4px;
+      line-height: 1;
+    }
+</style>
+</head>
+<body>
+
+<h1><span class="brand">Chowchala Interior</span> Calculator</h1>
+<p class="subtitle">
+  Cabinet board কাটা + Auto Cut List + Nesting + Hardware + Accessories + Worker payment – সব এক পেইজে।
+</p>
+
+
+<!-- ============================== 
+      CLIENT / PROJECT MANAGER 
+================================== -->
+<div class="card soft">
+  <h2>Add New Client / Project</h2>
+  <div class="flex">
+    <div>
+      <label>Client Name</label>
+      <input type="text" id="cwClientName" placeholder="Client name" />
+    </div>
+    <div>
+      <label>Project / Apartment Name</label>
+      <input type="text" id="cwProjectName" placeholder="Example: F-3, Level-5, Nova Green House" />
+    </div>
+    <div>
+      <label>Mobile (optional)</label>
+      <input type="text" id="cwMobile" placeholder="Mobile / contact" />
+    </div>
+    <div>
+      <label>Total Budget (Tk) (optional)</label>
+      <input type="number" id="cwBudget" placeholder="Total project budget" />
+    </div>
+  </div>
+  <button class="btn primary" id="cwSaveClientBtn">SAVE CLIENT</button>
+  <div class="client-small-note">
+    Total Clients: <span id="cwTotalClients">0</span>
+  </div>
+
+  <hr>
+
+  <div class="flex">
+    <div>
+      <label>Select Client</label>
+      <select id="cwClientSelect"></select>
+      <div class="note">একজন client সিলেক্ট করলে নিচে তার cabinet list দেখতে পাবে।</div>
+    </div>
+    <div class="client-summary-box" id="cwClientSummary">
+      এখনো কোনো client সেভ করা হয়নি।
+    </div>
+  </div>
+
+  <h3>Cabinet Details for Selected Client</h3>
+  <div class="flex">
+    <div>
+      <label>Cabinet Type</label>
+      <select id="cwCabType">
+        <option value="wardrobe">Cloth Cabinet / Wardrobe</option>
+        <option value="kitchen">Kitchen Cabinet</option>
+        <option value="other">Other Storage</option>
+      </select>
+    </div>
+    <div>
+      <label>Cabinet / Room Name</label>
+      <input type="text" id="cwCabLabel" placeholder="e.g. Master Bed Wardrobe, Kitchen Wall-1" />
+    </div>
+    <div>
+      <label>Size / Notes</label>
+      <input type="text" id="cwCabNote" placeholder="e.g. 10' × 8', 4 column, 2 drawer column..." />
+    </div>
+  </div>
+  <button class="btn secondary" id="cwAddCabinetBtn">➕ Add Cabinet to Client</button>
+
+  <div id="cwCabinetList" class="cabinet-list"></div>
+
+  <hr>
+
+  <h3>Import / Export (CSV – client + cabinet)</h3>
+  <div class="flex">
+    <div>
+      <button class="btn primary" id="cwExportCsvBtn">⬇ Export CSV</button>
+    <button class="btn light" id="exportAllBtn">📦 Export All Data (CSV)</button>
+    </div>
+    <div>
+      <label style="display:block;font-size:12px;margin-bottom:3px;">Import Entries from CSV</label>
+      <input type="file" id="cwImportFile" accept=".csv" />
+      <div style="margin-top:6px;">
+        <button class="btn secondary" id="cwImportAddBtn">IMPORT (ADD)</button>
+        <button class="btn secondary" id="cwImportReplaceBtn">IMPORT (REPLACE)</button>
+      </div>
+      <div class="note">
+        CSV format: clientName, projectName, mobile, budget, cabinetType, cabinetLabel, cabinetNote (প্রতি row = ১টা cabinet)।
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL UNIT SETTINGS -->
+<div class="card soft">
+  <h2>Global Settings</h2>
+  <div class="flex">
+    <div>
+      <label>Input Unit</label>
+      <select id="unitSelect">
+        <option value="inch" selected>Inch (")</option>
+        <option value="ft">Feet (')</option>
+      </select>
+      <div class="note">
+        যদি Feet সিলেক্ট করো, সব Height/Width/Depth feet এ লিখবে – হিসাব নিজে থেকেই inch এ convert হবে।<br>
+        Cut List সবসময় inch এ দেখাবে (কারিগরদের জন্য সহজ করার জন্য)।
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==============================
+      PART A – BOARD & CUT LIST
+=============================== -->
+<div class="section-title">PART A – Cabinet Board & Auto Cut List</div>
+
+<!-- BOARD SETTINGS -->
+<div class="card soft">
+  <h2>১️⃣ Board Settings (Sheet Size)</h2>
+  <div class="flex">
+    <div>
+      <label>Board Width</label>
+      <input type="number" id="boardWidth" value="48" step="0.1" />
+      <div class="note">Unit: উপরের Input Unit অনুযায়ী (ডিফল্ট Inch)</div>
+    </div>
+    <div>
+      <label>Board Height</label>
+      <input type="number" id="boardHeight" value="96" step="0.1" />
+      <div class="note">8'x4' হলে Height=96, Width=48 (inch)</div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTO CUT LIST UI -->
+<div class="card">
+  <h2>২️⃣ Cabinet Auto Cut List Generator <span class="badge">Beta</span></h2>
+  <div class="flex">
+    <div>
+      <label>Cabinet Height H</label>
+      <input type="number" id="cabH" value="84" step="0.1" />
+    </div>
+    <div>
+      <label>Cabinet Width W</label>
+      <input type="number" id="cabW" value="72" step="0.1" />
+    </div>
+    <div>
+      <label>Cabinet Depth D</label>
+      <input type="number" id="cabD" value="18" step="0.1" />
+    </div>
+    <div>
+      <label>Board Thickness (inch)</label>
+      <input type="number" id="thk" value="0.75" step="0.01" />
+      <div class="note">উদাহরণঃ 18mm ≈ 0.71"</div>
+    </div>
+  </div>
+
+  <div class="flex" style="margin-top:8px;">
+    <div>
+      <label>2nd Cabinet Height H</label>
+      <input type="number" id="cabH2" step="0.1" />
+    </div>
+    <div>
+      <label>2nd Cabinet Width W</label>
+      <input type="number" id="cabW2" step="0.1" />
+      <div class="note">খালি রাখলে ২য় Back Panel যোগ হবে না</div>
+    </div>
+  </div>
+
+  <div class="flex" style="margin-top:8px;">
+    <div>
+      <label>Vertical Compartments (Column)</label>
+      <input type="number" id="cols" value="3" step="1" min="1" />
+      <div class="note">Columns = inner vertical অংশের সংখ্যা</div>
+    </div>
+    <div>
+      <label>Fixed Shelves per Column</label>
+      <input type="number" id="shelvesPerCol" value="3" step="1" min="0" />
+      <div class="note">প্রতি column এ কতটা shelf</div>
+    </div>
+    <div>
+      <label>Back Panel</label>
+      <select id="hasBack">
+        <option value="yes">Yes (Full Back)</option>
+        <option value="no">No Back</option>
+      </select>
+    </div>
+    <div>
+      <label>Door Type</label>
+      <select id="doorType">
+        <option value="none">No Door</option>
+        <option value="single">Single Full Door</option>
+        <option value="double" selected>Double Door (L/R)</option>
+      </select>
+    </div>
+  </div>
+
+  <p class="note">
+    Assumption:  
+    • Side panel & partition = full height (H) × depth (D)  
+    • Top & bottom panel = full width (W) × depth (D)  
+    • Shelf width = columnwise internal width ধরে নেওয়া হয়েছে (approx)।  
+    • Back panel ( থাকলে ) = H × W, Door panel মোট width/height অনুযায়ী approx।  
+    • সব হিসাবের জন্য Unit → inch এ convert হবে, Cut List সবসময় inch-এ show করবে।
+  </p>
+
+  <button class="btn" onclick="generateCutList()">⚙ Auto Cut List তৈরি করুন</button>
+  <button class="btn light" onclick="clearRows()">🧹 Cut List Clear</button>
+</div>
+
+<!-- MANUAL CUT LIST TABLE -->
+<div class="card">
+  <h2>৩️⃣ Cut List (Auto Generated + Manual Edit)</h2>
+  <p class="note">
+    Auto Cut List থেকে সব Row আসবে, চাইলে তুমি এখানে ম্যানুয়ালি মাপ বা Qty পরিবর্তন করতে পারো, নতুন Part যোগ করতে পারো।  
+    এই টেবিলের Width/Height সবসময় inch ধরে নেওয়া হয়।
+  </p>
+  <button class="btn secondary" onclick="addRow()">➕ নতুন Part যোগ করুন</button>
+
+  <table id="partsTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Part Name</th>
+        <th>Width (inch)</th>
+        <th>Height (inch)</th>
+        <th>Qty</th>
+        <th>Area / piece (sq.ft)</th>
+        <th>Total Area (sq.ft)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Auto / Manual rows এখানে আসবে -->
+    </tbody>
+  </table>
+
+  <div id="cabinet2dWrapper" class="cabinet-2d-wrapper">
+    <h3>🧱 Cabinet 2D Layout Preview</h3>
+    <canvas id="cabinet2dCanvas" width="900" height="260"></canvas>
+    <p class="small-note">
+      এই ভিউ-টা simplified concept: উপরে Bedding area, মাঝখানে Hanging/Folding, নিচে Drawer / Bag zone।
+      Cabinet Height / Width / Column বদলালে আবার Auto Draw হবে।
+    </p>
+  </div>
+
+  <div id="simpleNestingSummary" class="small-note" style="margin-top:8px;"></div>
+
+  <button class="btn" onclick="calculate()">📐 মোট বোর্ড হিসাব করুন</button>
+</div>
+
+<!-- BOARD RESULT -->
+<div class="card green">
+  <h2>৪️⃣ Board Requirement Summary</h2>
+  <div id="results">
+    <p class="note">Cut List এ ডাটা দিয়ে <b>মোট বোর্ড হিসাব করুন</b> বাটনে ক্লিক করলেই নিচে রিপোর্ট পাবা।</p>
+  </div>
+</div>
+
+<!-- NESTING PREVIEW -->
+<div class="card">
+  <h2>৫️⃣ Simple Nesting Preview (Board Settings অনুযায়ী Sheet size)</h2>
+  <p class="note">
+    Cut List-এর সব part থেকে আনুমানিক layout দেখাবে – কোন sheet-এ কোন piece বসবে।  
+    এটি simple row-based nesting, তাই 100% perfect optimization না, কিন্তু ধারণা পাওয়ার জন্য খুব useful।
+  </p>
+  <label style="font-size:13px;">
+    <input type="checkbox" id="allowRotation" checked />
+    90° Rotation allow (better fit-এর জন্য piece ঘুরিয়ে বসাতে পারবে)
+  </label>
+  <button class="btn" onclick="previewNesting()">🧩 Nesting Preview তৈরি করুন</button>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-color" style="background:#ffccbc;"></div><span>Side Panel</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background:#ffe082;"></div><span>Partition</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background:#c5e1a5;"></div><span>Shelf</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background:#b3e5fc;"></div><span>Back Panel</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background:#d1c4e9;"></div><span>Door</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background:#f8bbd0;"></div><span>Others</span>
+    </div>
+  </div>
+
+  <div id="nestingContainer" style="margin-top:15px;"></div>
+</div>
+
+<!-- ==============================
+      PART B – HARDWARE & COST
+=============================== -->
+<div class="section-title">PART B – Hardware, Accessories & Worker Calculator</div>
+
+<!-- 1️⃣ DOOR HINGE CALCULATOR -->
+<div class="card">
+  <h2>১️⃣ Door Hinges Calculator</h2>
+  <p class="note">
+    Rule (Height অনুযায়ী):  
+    • ১ft–৩ft পর্যন্ত → ২টা hinge  
+    • ৩ft+–৪ft পর্যন্ত → ৩টা hinge  
+    • ৪ft+–৮ft পর্যন্ত → ৫টা hinge  
+    (Height inch এ convert হয়ে হিসাব হবে, তুমি Input Unit অনুযায়ী লিখতে পারো)
+  </p>
+  <button class="btn secondary" onclick="addDoorRow()">➕ নতুন Door যোগ করুন</button>
+
+  <table id="doorTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Door Name</th>
+        <th>Door Height (Unit as per global)</th>
+        <th>Qty (Door)</th>
+        <th>Hinges / Door</th>
+        <th>Total Hinges (row)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><input type="text" value="Main Door" /></td>
+        <td><input type="number" value="78" step="0.1" /></td>
+        <td><input type="number" value="2" step="1" min="1" /></td>
+        <td class="hingePer"></td>
+        <td class="hingeTotal"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Total Hinges (Auto)</label>
+      <input type="number" id="totalHinges" readonly />
+    </div>
+    <div>
+      <label>Price / Hinge</label>
+      <input type="number" id="hingePrice" step="0.01" />
+    </div>
+    <div>
+      <label>Total Hinge Amount</label>
+      <input type="number" id="hingeAmount" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcHinges()">📐 Hinge হিসাব করুন</button>
+</div>
+
+<!-- 2️⃣ DRAWER CHANNEL CALCULATOR -->
+<div class="card">
+  <h2>২️⃣ Drawer Channel Calculator</h2>
+  <p class="note">
+    Mapping (Drawer depth → Channel size):  
+    • 14" drawer → 12" channel  
+    • 16" drawer → 14" channel  
+    • 18" drawer → 16" channel  
+    • 20" drawer → 18" channel  
+    • 22" drawer → 20" channel  
+    (Depth Input Unit অনুযায়ী, হিসাব inch এ convert হবে, প্রতি drawer এ ২টা channel ধরা হয়েছে)
+  </p>
+
+  <button class="btn secondary" onclick="addDrawerRow()">➕ নতুন Drawer যোগ করুন</button>
+
+  <table id="drawerTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Drawer Name</th>
+        <th>Drawer Depth (Unit as per global)</th>
+        <th>Qty (Drawer)</th>
+        <th>Channel Size (inch)</th>
+        <th>Total Channel (row)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><input type="text" value="Drawer 1" /></td>
+        <td><input type="number" value="18" step="0.1" /></td>
+        <td><input type="number" value="3" step="1" min="1" /></td>
+        <td class="channelSize"></td>
+        <td class="channelTotal"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Total Channels (Auto)</label>
+      <input type="number" id="totalChannels" readonly />
+    </div>
+    <div>
+      <label>Price / Channel</label>
+      <input type="number" id="channelPrice" step="0.01" />
+    </div>
+    <div>
+      <label>Total Channel Amount</label>
+      <input type="number" id="channelAmount" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcChannels()">📐 Channel হিসাব করুন</button>
+</div>
+
+<!-- 3️⃣ PROFILE EDGING -->
+<div class="card">
+  <h2>৩️⃣ Profile Edging Calculator (sft ভিত্তিক)</h2>
+  <p class="note">
+    প্রতিটা অংশের width × height (inch) এবং Qty দিলে মোট sft হিসাব হবে।  
+    Input Unit যদি Feet থাকে, সেগুলোও inch এ convert হয়ে এখানে হিসাব হবে।
+  </p>
+  <button class="btn secondary" onclick="addProfileRow('edgeTable')">➕ নতুন Part (Edging)</button>
+
+  <table id="edgeTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Part Name</th>
+        <th>Width (Unit as per global)</th>
+        <th>Height (Unit as per global)</th>
+        <th>Qty</th>
+        <th>Area / piece (sft)</th>
+        <th>Total Area (sft)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Total Area (sft)</label>
+      <input type="number" id="edgeTotalSft" readonly />
+    </div>
+    <div>
+      <label>Price / sft</label>
+      <input type="number" id="edgePrice" step="0.01" />
+    </div>
+    <div>
+      <label>Total Edging Amount</label>
+      <input type="number" id="edgeAmount" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcProfile('edgeTable','edgeTotalSft','edgeAmount','edgePrice')">📐 Edging হিসাব করুন</button>
+</div>
+
+<!-- 4️⃣ PROFILE HANDLE -->
+<div class="card">
+  <h2>৪️⃣ Profile Handle Calculator (same as edging)</h2>
+  <p class="note">
+    Profile Handle এর জন্যও একইভাবে width × height & Qty দিবে, মোট sft + amount বের হবে।
+  </p>
+  <button class="btn secondary" onclick="addProfileRow('handleTable')">➕ নতুন Part (Handle)</button>
+
+  <table id="handleTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Part Name</th>
+        <th>Width (Unit as per global)</th>
+        <th>Height (Unit as per global)</th>
+        <th>Qty</th>
+        <th>Area / piece (sft)</th>
+        <th>Total Area (sft)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Total Area (sft)</label>
+      <input type="number" id="handleTotalSft" readonly />
+    </div>
+    <div>
+      <label>Price / sft</label>
+      <input type="number" id="handlePrice" step="0.01" />
+    </div>
+    <div>
+      <label>Total Handle Amount</label>
+      <input type="number" id="handleAmount" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcProfile('handleTable','handleTotalSft','handleAmount','handlePrice')">📐 Handle হিসাব করুন</button>
+</div>
+
+<!-- 5️⃣ ACCESSORIES -->
+<div class="card">
+  <h2>৫️⃣ Accessories & Misc. Cost</h2>
+  <p class="note">
+    Lock, screw, pin, 1" clamp, profile lighting, electric wiring/ফিটিং, ইত্যাদি – সব এক জায়গায় হিসাব।  
+    শুধু Qty × Rate দিলে line total ও grand total বের হবে।
+  </p>
+  <button class="btn secondary" onclick="addAccessoryRow()">➕ নতুন Accessories Item</button>
+
+  <table id="accessoryTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Item Name</th>
+        <th>Qty</th>
+        <th>Unit</th>
+        <th>Rate (Tk)</th>
+        <th>Amount (Tk)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Total Accessories Amount (Tk)</label>
+      <input type="number" id="accessoryTotal" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcAccessories()">📐 Accessories হিসাব করুন</button>
+</div>
+
+<!-- 6️⃣ BOARD WORKER CALCULATOR -->
+<div class="card green">
+  <h2>৬️⃣ Board Worker হিসাব</h2>
+  <p class="note">
+    PART A থেকে কতগুলো board লাগবে সেটা এখানে আসবে (auto)।  
+    চাইলে date অনুযায়ী worker কত board কাজ করেছে তাও এন্ট্রি রাখতে পারো।  
+    Total board × প্রতি board rate = Worker payment।
+  </p>
+
+  <div class="flex" style="margin-bottom:8px;">
+    <div>
+      <label>Total Boards (from Part A)</label>
+      <input type="number" id="boardsFromCalc" readonly />
+    </div>
+    <div>
+      <label>Rate / Board (Tk)</label>
+      <input type="number" id="workerRate" step="0.01" />
+    </div>
+    <div>
+      <label>Total Worker Amount (Tk)</label>
+      <input type="number" id="workerAmount" readonly />
+    </div>
+  </div>
+
+  <p class="note">
+    নিচের টেবিলে date-wise হিসাব রাখলে Total Pieces (boards) auto sum হবে।<br>
+    যদি নিচে কিছু না দাও, তবে উপরের “Total Boards (from Part A)” ধরে worker হিসাব হবে।
+  </p>
+
+  <button class="btn secondary" onclick="addWorkerRow()">➕ নতুন এন্ট্রি (দিন)</button>
+
+  <table id="workerTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Date</th>
+        <th>Details / Note</th>
+        <th>Pieces (Boards)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="flex" style="margin-top:10px;">
+    <div>
+      <label>Effective Total Boards for Payment</label>
+      <input type="number" id="workerTotalPcs" readonly />
+    </div>
+  </div>
+
+  <button class="btn" onclick="calcWorker()">📐 Worker হিসাব করুন</button>
+</div>
+
+<script>
+  /* ========== Unit & Conversion Helpers ========== */
+  function getUnit() {
+    const sel = document.getElementById('unitSelect');
+    return sel ? sel.value : 'inch';
+  }
+
+  // Feet মোডে 1.10 মানে 1'-10" ধরা হচ্ছে (ft.part → part ইঞ্চি)
+  function toInch(vRaw) {
+    const unit = getUnit();
+    if (!vRaw) return 0;
+    if (unit === 'inch') return vRaw;
+
+    // feet.mode : x.yy → x ft + yy in
+    const isNeg = vRaw < 0;
+    let v = Math.abs(vRaw);
+    const ft = Math.trunc(v);
+    const inchPart = Math.round((v - ft) * 100); // e.g. 1.10 → 10
+    let total = ft * 12 + inchPart;
+    if (isNeg) total *= -1;
+    return total;
+  }
+
+  // inch → display string
+  function formatLen(inch, digits = 1) {
+    const unit = getUnit();
+    const sign = inch < 0 ? '-' : '';
+    let v = Math.abs(inch);
+
+    if (unit === 'inch') {
+      return sign + v.toFixed(digits) + '"';
+    } else {
+      let ft = Math.floor(v / 12);
+      let inchRem = Math.round(v - ft * 12);
+      if (inchRem === 12) {
+        ft += 1;
+        inchRem = 0;
+      }
+      return sign + ft + "'-" + inchRem + '"';
+    }
+  }
+
+  /* ============================
+     PART A – BOARD & CUT LIST
+  ============================ */
+
+  // 2D Cabinet Layout Preview
+  
+  function drawCabinet2D() {
+    const canvas = document.getElementById('cabinet2dCanvas');
+    if (!canvas || !canvas.getContext) return;
+
+    const ctx = canvas.getContext('2d');
+
+    const H = parseFloat(document.getElementById('cabH') && document.getElementById('cabH').value) || 0;
+    const W = parseFloat(document.getElementById('cabW') && document.getElementById('cabW').value) || 0;
+    const cols = parseInt(document.getElementById('cols') && document.getElementById('cols').value) || 1;
+
+    if (!H || !W) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    const padding = 20;
+    const availW = canvas.width  - padding * 2;
+    const availH = canvas.height - padding * 2;
+
+    const scale = Math.min(availW / W, availH / H);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.translate(padding, padding + availH);
+    ctx.scale(scale, -scale);
+
+    const cabWidth  = W;
+    const cabHeight = H;
+
+    // outer box
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1 / scale;
+    ctx.beginPath();
+    ctx.rect(0, 0, cabWidth, cabHeight);
+    ctx.fill();
+    ctx.stroke();
+
+    const colWidth = cabWidth / cols;
+
+    // vertical partitions
+    ctx.strokeStyle = '#bbbbbb';
+    for (let i = 1; i < cols; i++) {
+      const x = colWidth * i;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, cabHeight);
+      ctx.stroke();
+    }
+
+    // split height into three zones
+    const topH = cabHeight * 0.25;   // luggage / bedding
+    const midH = cabHeight * 0.45;   // hanging / shelves
+    const botH = cabHeight - topH - midH;
+
+    const yTopLine = cabHeight - topH;
+    const yMidLine = botH;
+
+    // zone backgrounds
+    ctx.fillStyle = 'rgba(255, 235, 59, 0.35)'; // top
+    ctx.fillRect(0, yTopLine, cabWidth, topH);
+
+    ctx.fillStyle = 'rgba(33, 150, 243, 0.25)'; // middle
+    ctx.fillRect(0, yMidLine, cabWidth, midH);
+
+    ctx.fillStyle = 'rgba(76, 175, 80, 0.25)'; // bottom
+    ctx.fillRect(0, 0, cabWidth, botH);
+
+    ctx.strokeStyle = '#bdbdbd';
+    ctx.beginPath();
+    ctx.moveTo(0, yTopLine);
+    ctx.lineTo(cabWidth, yTopLine);
+    ctx.moveTo(0, yMidLine);
+    ctx.lineTo(cabWidth, yMidLine);
+    ctx.stroke();
+
+    // per column detailing
+    for (let i = 0; i < cols; i++) {
+      const x0 = colWidth * i;
+
+      // TOP: luggage shelf line
+      ctx.strokeStyle = '#8d6e63';
+      ctx.beginPath();
+      ctx.moveTo(x0 + colWidth * 0.1, yTopLine + topH * 0.5);
+      ctx.lineTo(x0 + colWidth * 0.9, yTopLine + topH * 0.5);
+      ctx.stroke();
+
+      // MIDDLE: odd columns -> hanging, even -> shelves
+      const isHanging = (i % 2 === 0);
+      if (isHanging) {
+        const yRod = yMidLine + midH * 0.7;
+        ctx.strokeStyle = '#6d4c41';
+        ctx.beginPath();
+        ctx.moveTo(x0 + colWidth * 0.15, yRod);
+        ctx.lineTo(x0 + colWidth * 0.85, yRod);
+        ctx.stroke();
+
+        const hangerCount = 3;
+        for (let h = 0; h < hangerCount; h++) {
+          const hx = x0 + colWidth * (0.2 + (0.6 * h) / (hangerCount - 1));
+          ctx.beginPath();
+          ctx.moveTo(hx, yRod);
+          ctx.lineTo(hx, yRod - midH * 0.25);
+          ctx.stroke();
+        }
+      } else {
+        ctx.strokeStyle = '#757575';
+        const shelfCount = Math.max(1, Math.min(4, parseInt(document.getElementById('shelvesPerCol') && document.getElementById('shelvesPerCol').value) || 0));
+        for (let s = 1; s <= shelfCount; s++) {
+          const yShelf = yMidLine + (midH * s) / (shelfCount + 1);
+          ctx.beginPath();
+          ctx.moveTo(x0 + colWidth * 0.1, yShelf);
+          ctx.lineTo(x0 + colWidth * 0.9, yShelf);
+          ctx.stroke();
+        }
+      }
+
+      // BOTTOM: drawers
+      const drawerWidth  = colWidth * 0.8;
+      const drawerHeight = botH * 0.35;
+      const dx = x0 + colWidth * 0.1;
+
+      for (let d = 0; d < 2; d++) {
+        const dy = botH * 0.1 + d * (drawerHeight + botH * 0.05);
+        ctx.strokeStyle = '#5d4037';
+        ctx.strokeRect(dx, dy, drawerWidth, drawerHeight);
+
+        ctx.beginPath();
+        ctx.moveTo(dx + drawerWidth * 0.3, dy + drawerHeight * 0.5);
+        ctx.lineTo(dx + drawerWidth * 0.7, dy + drawerHeight * 0.5);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+
+    // legend
+    ctx.save();
+    ctx.font = '11px Arial';
+    ctx.fillStyle = '#333';
+    ctx.fillText('Top    : Luggage / Bedding shelf', 8, 14);
+    ctx.fillText('Middle : Hanging (odd col) / Shelves (even col)', 8, 30);
+    ctx.fillText('Bottom : Drawers / Bag / Shoes', 8, 46);
+    ctx.restore();
+  }
+
+// Simple Nesting Summary (area ভিত্তিক)
+  function updateSimpleNestingSummary() {
+    const summaryEl = document.getElementById('simpleNestingSummary');
+    const tbody = document.querySelector('#partsTable tbody');
+    if (!summaryEl || !tbody) return;
+
+    let totalAreaInch2 = 0;
+
+    tbody.querySelectorAll('tr').forEach(tr => {
+      const wInput = tr.children[2]?.querySelector('input');
+      const hInput = tr.children[3]?.querySelector('input');
+      const qInput = tr.children[4]?.querySelector('input');
+
+      const w = parseFloat(wInput?.value) || 0;
+      const h = parseFloat(hInput?.value) || 0;
+      const q = parseFloat(qInput?.value) || 0;
+
+      if (w > 0 && h > 0 && q > 0) {
+        totalAreaInch2 += w * h * q;
+      }
+    });
+
+    if (!totalAreaInch2) {
+      summaryEl.textContent = '';
+      return;
+    }
+
+    // Board size from Board Settings (unit-aware)
+    const sheetW = toInch(parseFloat(document.getElementById('boardWidth').value) || 0);
+    const sheetH = toInch(parseFloat(document.getElementById('boardHeight').value) || 0);
+    if (!sheetW || !sheetH) {
+      summaryEl.textContent = '';
+      return;
+    }
+    const sheetArea = sheetW * sheetH;
+
+    const boardsNeeded   = Math.ceil(totalAreaInch2 / sheetArea);
+    const usedSqft       = totalAreaInch2 / 144;
+    const totalBoardSqft = (boardsNeeded * sheetArea) / 144;
+    const leftoverSqft   = totalBoardSqft - usedSqft;
+
+    summaryEl.innerHTML =
+      `🔍 Area estimate অনুযায়ী <b>${boardsNeeded}</b> টি board লাগবে (Board Settings অনুযায়ী Sheet size ধরে)।<br>` +
+      `Used area: <b>${usedSqft.toFixed(2)} sq.ft</b> · ` +
+      `Total board area: <b>${totalBoardSqft.toFixed(2)} sq.ft</b> · ` +
+      `Extra / offcut: <b>${leftoverSqft.toFixed(2)} sq.ft</b> ` +
+      `(drawer front, side panel, স্কার্টিং ইত্যাদিতে use করা যাবে).`;
+  }
+
+
+  // নতুন manual row (cut list)
+  
+  function swapWH(btn) {
+    const tr = btn.closest('tr');
+    if (!tr) return;
+    const wCell = tr.cells[2];
+    const hCell = tr.cells[3];
+    if (!wCell || !hCell) return;
+    const wInput = wCell.querySelector('input');
+    const hInput = hCell.querySelector('input');
+    if (!wInput || !hInput) return;
+    const tmp = wInput.value;
+    wInput.value = hInput.value;
+    hInput.value = tmp;
+  }
+
+
+  function addRow(part = {}) {
+    const tbody = document.querySelector('#partsTable tbody');
+    const rowCount = tbody.rows.length + 1;
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="text" value="${part.name || ''}" placeholder="e.g. Partition" /></td>
+      <td>
+        <div class="wh-cell">
+          <input type="number" value="${part.w || ''}" step="0.1" />
+          <button type="button" class="swapWHBtn" onclick="swapWH(this)">↔</button>
+        </div>
+      </td>
+      <td><input type="number" value="${part.h || ''}" step="0.1" /></td>
+      <td><input type="number" value="${part.qty || 1}" step="1" min="1" /></td>
+      <td class="areaPer"></td>
+      <td class="areaTotal"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+// সব cut list row clear
+  function clearRows() {
+    const tbody = document.querySelector('#partsTable tbody');
+    tbody.innerHTML = '';
+  }
+
+  // AUTO CUT LIST GENERATION
+  
+  function generateCutList() {
+    const Hraw  = parseFloat(document.getElementById('cabH').value) || 0;
+    const Wraw  = parseFloat(document.getElementById('cabW').value) || 0;
+    const Draw  = parseFloat(document.getElementById('cabD').value) || 0;
+    const thk   = parseFloat(document.getElementById('thk').value) || 0;
+
+    const H2raw = parseFloat(document.getElementById('cabH2') && document.getElementById('cabH2').value) || 0;
+    const W2raw = parseFloat(document.getElementById('cabW2') && document.getElementById('cabW2').value) || 0;
+
+    const H  = toInch(Hraw);
+    const W  = toInch(Wraw);
+    const D  = toInch(Draw);
+    const H2 = toInch(H2raw);
+    const W2 = toInch(W2raw);
+
+    let cols          = parseInt(document.getElementById('cols').value) || 1;
+    let shelvesPerCol = parseInt(document.getElementById('shelvesPerCol').value) || 0;
+    const hasBack     = document.getElementById('hasBack').value;
+    const doorType    = document.getElementById('doorType').value;
+
+    if (!H || !W || !D || !thk) {
+      alert('Cabinet Height, Width, Depth এবং Board Thickness ঠিকমতো দিন।');
+      return;
+    }
+
+    if (cols < 1) cols = 1;
+    if (shelvesPerCol < 0) shelvesPerCol = 0;
+
+    const parts = [];
+
+    parts.push({ name: 'Side Panel', w: D, h: H, qty: 2 });
+
+    if (cols > 1) {
+      parts.push({ name: 'Vertical Partition', w: D, h: H, qty: cols - 1 });
+    }
+
+    parts.push({ name: 'Top Panel',    w: W, h: D, qty: 1 });
+    parts.push({ name: 'Bottom Panel', w: W, h: D, qty: 1 });
+
+    const internalWidth = W - 2 * thk;
+    const columnClear   = cols > 0 ? (internalWidth - (cols - 1) * thk) / cols : internalWidth;
+    const shelfWidth    = columnClear > 0 ? columnClear : internalWidth;
+    const shelfQty      = cols * shelvesPerCol;
+    if (shelfQty > 0) {
+      parts.push({
+        name: 'Shelf',
+        w: parseFloat(shelfWidth.toFixed(2)),
+        h: D,
+        qty: shelfQty
+      });
+    }
+
+    if (hasBack === 'yes') {
+  // 1st Back Panel
+  parts.push({ name: 'Back Panel', w: W, h: H, qty: 1 });
+
+  // 2nd Back Panel → always added
+  const finalH2 = H2 || H;   // খালি থাকলে main cabinet height
+  const finalW2 = W2 || W;   // খালি থাকলে main cabinet width
+
+  parts.push({
+    name: 'Back Panel (2nd)',
+    w: finalW2,
+    h: finalH2,
+    qty: 1
+  });
+}
+
+    if (doorType === 'double') {
+      const doorClearWidth = (W - 2 * thk - 2) / 2;
+      const doorHeight = H - 2 * thk;
+      parts.push({
+        name: 'Door Panel (Left)',
+        w: doorClearWidth,
+        h: doorHeight,
+        qty: 1
+      });
+      parts.push({
+        name: 'Door Panel (Right)',
+        w: doorClearWidth,
+        h: doorHeight,
+        qty: 1
+      });
+    }
+
+    clearRows();
+    const tbody = document.querySelector('#partsTable tbody');
+    parts.forEach((p, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td><input type="text" value="${p.name}" /></td>
+        <td>
+          <div class="wh-cell">
+            <input type="number" value="${p.w.toFixed ? p.w.toFixed(2) : p.w}" step="0.1" />
+            <button type="button" class="swapWHBtn" onclick="swapWH(this)">↔</button>
+          </div>
+        </td>
+        <td><input type="number" value="${p.h.toFixed ? p.h.toFixed(2) : p.h}" step="0.1" /></td>
+        <td><input type="number" value="${p.qty}" step="1" min="1" /></td>
+        <td class="areaPer"></td>
+        <td class="areaTotal"></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    alert('Auto Cut List তৈরি হয়েছে। এখন চাইলে মাপ/Qty পরিবর্তন করে Board হিসাব করুন।');
+    drawCabinet2D();
+  }
+
+// BOARD CALCULATION
+  function calculate() {
+    const boardWraw = parseFloat(document.getElementById('boardWidth').value) || 0;
+    const boardHraw = parseFloat(document.getElementById('boardHeight').value) || 0;
+    const boardW    = toInch(boardWraw);
+    const boardH    = toInch(boardHraw);
+
+    if (!boardW || !boardH) {
+      alert('Board width এবং height ঠিকমতো দিন।');
+      return;
+    }
+
+    const boardAreaSqIn = boardW * boardH;
+    const boardAreaSqFt = boardAreaSqIn / 144;
+
+    const tbody = document.querySelector('#partsTable tbody');
+    let totalAreaSqFt = 0;
+    let details = [];
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row  = tbody.rows[i];
+      const name = row.cells[1].querySelector('input').value || `Part ${i+1}`;
+      const w    = parseFloat(row.cells[2].querySelector('input').value) || 0; // inch
+      const h    = parseFloat(row.cells[3].querySelector('input').value) || 0;
+      const qty  = parseFloat(row.cells[4].querySelector('input').value) || 0;
+
+      if (!w || !h || !qty) {
+        row.cells[5].textContent = '';
+        row.cells[6].textContent = '';
+        continue;
+      }
+
+      const areaPerSqIn   = w * h;
+      const areaPerSqFt   = areaPerSqIn / 144;
+      const areaTotalSqFt = areaPerSqFt * qty;
+
+      totalAreaSqFt += areaTotalSqFt;
+
+      row.cells[5].textContent = areaPerSqFt.toFixed(2);
+      row.cells[6].textContent = areaTotalSqFt.toFixed(2);
+
+      details.push({
+        name,
+        w,
+        h,
+        qty,
+        areaPerSqFt,
+        areaTotalSqFt
+      });
+    }
+
+    if (totalAreaSqFt === 0) {
+      alert('কমপক্ষে একটি পার্টের width, height এবং qty দিন।');
+      return;
+    }
+
+    const sheetCount          = Math.ceil(totalAreaSqFt / boardAreaSqFt);
+    const usedAreaSqFt        = totalAreaSqFt;
+    const totalSheetAreaSqFt  = sheetCount * boardAreaSqFt;
+    const wasteSqFt           = totalSheetAreaSqFt - usedAreaSqFt;
+    const efficiency          = (usedAreaSqFt / totalSheetAreaSqFt) * 100;
+
+    // Worker সেকশনে total boards auto-set
+    const boardsField = document.getElementById('boardsFromCalc');
+    if (boardsField) boardsField.value = sheetCount;
+
+    renderResults({
+      boardW,
+      boardH,
+      boardAreaSqFt,
+      usedAreaSqFt,
+      sheetCount,
+      wasteSqFt,
+      efficiency,
+      details
+    });
+    updateSimpleNestingSummary();
+  }
+
+  function renderResults(data) {
+    const {
+      boardW,
+      boardH,
+      boardAreaSqFt,
+      usedAreaSqFt,
+      sheetCount,
+      wasteSqFt,
+      efficiency,
+      details
+    } = data;
+
+    const resultsDiv = document.getElementById('results');
+
+    let html = `
+      <p class="result-item">
+        <span class="highlight">Board Size:</span>
+        ${formatLen(boardH)} × ${formatLen(boardW)}
+        (≈ ${boardAreaSqFt.toFixed(2)} sq.ft / sheet)
+      </p>
+      <p class="result-item">
+        <span class="highlight">মোট প্রয়োজনীয় বোর্ড এরিয়া:</span>
+        ${usedAreaSqFt.toFixed(2)} sq.ft
+      </p>
+      <p class="result-item">
+        <span class="highlight">প্রাক্কলিত বোর্ড প্রয়োজন:</span>
+        ${sheetCount} টি (এই সংখ্যা Worker সেকশনে auto গেছে)
+      </p>
+      <p class="result-item">
+        <span class="highlight">আনুমানিক বর্জ্য (Waste):</span>
+        ${wasteSqFt.toFixed(2)} sq.ft
+        (ব্যবহার: ${efficiency.toFixed(1)}%, অপচয়: ${(100-efficiency).toFixed(1)}%)
+      </p>
+      <hr>
+      <h3>Part-wise Breakdown</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Part Name</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Qty</th>
+            <th>Area / piece (sq.ft)</th>
+            <th>Total Area (sq.ft)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    details.forEach((d, idx) => {
+      html += `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${d.name}</td>
+          <td>${formatLen(d.w)}</td>
+          <td>${formatLen(d.h)}</td>
+          <td>${d.qty}</td>
+          <td>${d.areaPerSqFt.toFixed(2)}</td>
+          <td>${d.areaTotalSqFt.toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+      <p class="note">
+        ⚠ এই ক্যালকুলেটর মোট area ভিত্তিক বোর্ড সংখ্যা দেখায়।  
+        নিচের Nesting Preview থেকে sheet অনুযায়ী কাটা পিস আর বাকি টুকরা (scrap) সাইজ দেখতে পারবে।
+      </p>
+    `;
+
+    resultsDiv.innerHTML = html;
+  }
+
+  /* ========== NESTING PREVIEW ========== */
+
+  // part color mapping
+  function getPartColor(name) {
+    const n = (name || '').toLowerCase();
+    if (n.includes('side'))      return { bg: '#ffccbc', border: '#d84315' };
+    if (n.includes('partition')) return { bg: '#ffe082', border: '#ff8f00' };
+    if (n.includes('shelf'))     return { bg: '#c5e1a5', border: '#558b2f' };
+    if (n.includes('back'))      return { bg: '#b3e5fc', border: '#0277bd' };
+    if (n.includes('door'))      return { bg: '#d1c4e9', border: '#5e35b1' };
+    return { bg: '#f8bbd0', border: '#c2185b' };
+  }
+
+  // Cut List থেকে প্রতি Qty অনুযায়ী piece array
+  function getRectanglesFromCutList() {
+    const tbody = document.querySelector('#partsTable tbody');
+    const rects = [];
+    let idx = 1;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row  = tbody.rows[i];
+      const name = row.cells[1].querySelector('input').value || `Part ${i+1}`;
+      const w    = parseFloat(row.cells[2].querySelector('input').value) || 0;
+      const h    = parseFloat(row.cells[3].querySelector('input').value) || 0;
+      const qty  = parseFloat(row.cells[4].querySelector('input').value) || 0;
+
+      if (!w || !h || !qty) continue;
+
+      for (let q = 0; q < qty; q++) {
+        rects.push({ id: idx++, name, w, h });
+      }
+    }
+    return rects;
+  }
+
+  // helper: try place rect on a sheet (with optional rotation)
+  function tryPlaceOnSheet(rect, sheet, boardW, boardH, allowRotation) {
+    const orientations = [{ w: rect.w, h: rect.h }];
+    if (allowRotation) {
+      orientations.push({ w: rect.h, h: rect.w });
+    }
+
+    for (let o = 0; o < orientations.length; o++) {
+      const ow = orientations[o].w;
+      const oh = orientations[o].h;
+
+      // existing rows
+      for (let r = 0; r < sheet.rows.length; r++) {
+        const row = sheet.rows[r];
+        if (oh <= row.height && row.usedWidth + ow <= boardW) {
+          return {
+            placed: true,
+            x: row.usedWidth,
+            y: row.y,
+            w: ow,
+            h: oh,
+            rowRef: row,
+            newRow: false
+          };
+        }
+      }
+
+      // নতুন row
+      const remainingH = boardH - sheet.usedHeight;
+      if (oh <= remainingH) {
+        return {
+          placed: true,
+          x: 0,
+          y: sheet.usedHeight,
+          w: ow,
+          h: oh,
+          rowRef: null,
+          newRow: true
+        };
+      }
+    }
+
+    return { placed: false };
+  }
+
+  // Simple row-based nesting algorithm per sheet
+  function generateNestingLayout(boardW, boardH, rects) {
+    rects.sort((a, b) => b.h - a.h); // বড়গুলো আগে
+    const sheets = [];
+    const allowRotation = document.getElementById('allowRotation').checked;
+
+    rects.forEach(rect => {
+      let placed = false;
+
+      for (let s = 0; s < sheets.length && !placed; s++) {
+        const sheet = sheets[s];
+        const placement = tryPlaceOnSheet(rect, sheet, boardW, boardH, allowRotation);
+
+        if (placement.placed) {
+          const rPlaced = {
+            name: rect.name,
+            w: placement.w,
+            h: placement.h,
+            x: placement.x,
+            y: placement.y,
+            sheetIndex: s
+          };
+
+          if (placement.newRow) {
+            const newRow = {
+              y: placement.y,
+              height: placement.h,
+              usedWidth: placement.w
+            };
+            sheet.rows.push(newRow);
+            sheet.usedHeight += placement.h;
+          } else if (placement.rowRef) {
+            placement.rowRef.usedWidth += placement.w;
+          }
+
+          sheet.placedRects.push(rPlaced);
+          placed = true;
+        }
+      }
+
+      if (!placed) {
+        const newSheet = { usedHeight: 0, rows: [], placedRects: [] };
+        const placement = tryPlaceOnSheet(rect, newSheet, boardW, boardH, allowRotation);
+        if (!placement.placed) {
+          console.warn('Rect খুব বড়, sheet এ fit হচ্ছে না:', rect);
+          return;
+        }
+        const newRow = {
+          y: placement.y,
+          height: placement.h,
+          usedWidth: placement.w
+        };
+        newSheet.rows.push(newRow);
+        newSheet.usedHeight += placement.h;
+        newSheet.placedRects.push({
+          name: rect.name,
+          w: placement.w,
+          h: placement.h,
+          x: placement.x,
+          y: placement.y,
+          sheetIndex: sheets.length
+        });
+        sheets.push(newSheet);
+      }
+    });
+
+    return sheets;
+  }
+
+  // DOM এ nesting preview আঁকা + scrap list
+  function renderNestingPreview(boardW, boardH, sheets) {
+    const container = document.getElementById('nestingContainer');
+    container.innerHTML = '';
+
+    if (!sheets.length) {
+      container.innerHTML = '<p class="note">কোনো part পাওয়া যায়নি। Cut List-এ ডাটা দিন।</p>';
+      return;
+    }
+
+    const maxDisplayW = 700;
+    const maxDisplayH = 350;
+    const scale       = Math.min(maxDisplayW / boardW, maxDisplayH / boardH);
+    const boardAreaSqFt = (boardW * boardH) / 144;
+
+    sheets.forEach((sheet, index) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'sheetWrapper';
+
+      // used area হিসাব
+      let usedAreaSqIn = 0;
+      sheet.placedRects.forEach(r => { usedAreaSqIn += r.w * r.h; });
+      const usedAreaSqFt = usedAreaSqIn / 144;
+      const efficiency   = (usedAreaSqFt / boardAreaSqFt) * 100;
+
+      // scrap rectangles (right strips + bottom strip)
+      const scraps = [];
+      sheet.rows.forEach(row => {
+        const scrapW = boardW - row.usedWidth;
+        if (scrapW > 1 && row.height > 1) {
+          scraps.push({ w: scrapW, h: row.height });
+        }
+      });
+      const bottomH = boardH - sheet.usedHeight;
+      if (bottomH > 1) {
+        scraps.push({ w: boardW, h: bottomH });
+      }
+
+      const title = document.createElement('div');
+      title.className = 'sheetTitle';
+      title.textContent =
+        `Sheet ${index + 1} – Used: ${usedAreaSqFt.toFixed(2)} sft / ${boardAreaSqFt.toFixed(2)} sft (${efficiency.toFixed(1)}% used)`;
+      wrap.appendChild(title);
+
+      const sheetDiv = document.createElement('div');
+      sheetDiv.className = 'sheetContainer';
+      sheetDiv.style.width  = (boardW * scale) + 'px';
+      sheetDiv.style.height = (boardH * scale) + 'px';
+
+      // placed rectangles
+      sheet.placedRects.forEach(rect => {
+        const rDiv  = document.createElement('div');
+        rDiv.className = 'sheetRect';
+        const color = getPartColor(rect.name);
+
+        rDiv.style.left   = (rect.x * scale) + 'px';
+        rDiv.style.top    = (rect.y * scale) + 'px';
+        rDiv.style.width  = (rect.w * scale) + 'px';
+        rDiv.style.height = (rect.h * scale) + 'px';
+        rDiv.style.backgroundColor = color.bg;
+        rDiv.style.borderColor     = color.border;
+
+        rDiv.innerHTML = `
+          <div>${rect.name}</div>
+          <div style="font-size:9px;">${formatLen(rect.w)} × ${formatLen(rect.h)}</div>
+        `;
+        sheetDiv.appendChild(rDiv);
+      });
+
+      wrap.appendChild(sheetDiv);
+
+      // scrap list
+      const scrapDiv = document.createElement('div');
+      scrapDiv.className = 'note';
+      if (scraps.length) {
+        let scrapHtml = '<b>এই sheet থেকে usable অতিরিক্ত টুকরা:</b><br>';
+        scraps.forEach((s, i) => {
+          const area = (s.w * s.h) / 144;
+          scrapHtml += `• ${formatLen(s.w)} × ${formatLen(s.h)} ≈ ${area.toFixed(2)} sft<br>`;
+        });
+        scrapDiv.innerHTML = scrapHtml;
+      } else {
+        scrapDiv.innerHTML = '<b>এই sheet প্রায় পূর্ণ ব্যবহৃত – আলাদা usable টুকরা নেই।</b>';
+      }
+      wrap.appendChild(scrapDiv);
+
+      container.appendChild(wrap);
+    });
+  }
+
+  function previewNesting() {
+    const boardWraw = parseFloat(document.getElementById('boardWidth').value) || 0;
+    const boardHraw = parseFloat(document.getElementById('boardHeight').value) || 0;
+    const boardW    = toInch(boardWraw);
+    const boardH    = toInch(boardHraw);
+
+    if (!boardW || !boardH) {
+      alert('Board width এবং height ঠিকমতো দিন।');
+      return;
+    }
+
+    const rects = getRectanglesFromCutList();
+    if (!rects.length) {
+      alert('Cut List থেকে অন্তত ১টা part দিন।');
+      return;
+    }
+
+    const sheets = generateNestingLayout(boardW, boardH, rects);
+    renderNestingPreview(boardW, boardH, sheets);
+  }
+
+  /* ============================
+     PART B – HARDWARE & COST
+  ============================ */
+
+  /* ---------- HINGE SECTION ---------- */
+  function addDoorRow() {
+    const tbody = document.querySelector('#doorTable tbody');
+    const tr = document.createElement('tr');
+    const rowCount = tbody.rows.length + 1;
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="text" value="Door ${rowCount}" /></td>
+      <td><input type="number" value="78" step="0.1" /></td>
+      <td><input type="number" value="1" step="1" min="1" /></td>
+      <td class="hingePer"></td>
+      <td class="hingeTotal"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function getHingesByHeight(hInch) {
+    const hFt = hInch / 12;
+    if (hFt <= 3) return 2;
+    if (hFt <= 4) return 3;
+    if (hFt <= 8) return 5;
+    return 6;
+  }
+
+  function calcHinges() {
+    const tbody = document.querySelector('#doorTable tbody');
+    let totalHinges = 0;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row   = tbody.rows[i];
+      const hRaw  = parseFloat(row.cells[2].querySelector('input').value) || 0;
+      const h     = toInch(hRaw);
+      const qty   = parseFloat(row.cells[3].querySelector('input').value) || 0;
+
+      if (!h || !qty) {
+        row.querySelector('.hingePer').textContent   = '';
+        row.querySelector('.hingeTotal').textContent = '';
+        continue;
+      }
+
+      const per   = getHingesByHeight(h);
+      const total = per * qty;
+
+      row.querySelector('.hingePer').textContent   = per;
+      row.querySelector('.hingeTotal').textContent = total;
+
+      totalHinges += total;
+    }
+
+    document.getElementById('totalHinges').value = totalHinges;
+    const price = parseFloat(document.getElementById('hingePrice').value) || 0;
+    document.getElementById('hingeAmount').value = (totalHinges * price).toFixed(2);
+  }
+
+  /* ---------- CHANNEL SECTION ---------- */
+  function addDrawerRow() {
+    const tbody = document.querySelector('#drawerTable tbody');
+    const tr = document.createElement('tr');
+    const rowCount = tbody.rows.length + 1;
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="text" value="Drawer ${rowCount}" /></td>
+      <td><input type="number" value="18" step="0.1" /></td>
+      <td><input type="number" value="1" step="1" min="1" /></td>
+      <td class="channelSize"></td>
+      <td class="channelTotal"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function getChannelSize(depthInch) {
+    if (depthInch <= 14) return 12;
+    if (depthInch <= 16) return 14;
+    if (depthInch <= 18) return 16;
+    if (depthInch <= 20) return 18;
+    if (depthInch <= 22) return 20;
+    return depthInch - 2;
+  }
+
+  function calcChannels() {
+    const tbody = document.querySelector('#drawerTable tbody');
+    let totalChannels = 0;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row   = tbody.rows[i];
+      const dRaw  = parseFloat(row.cells[2].querySelector('input').value) || 0;
+      const depth = toInch(dRaw);
+      const qty   = parseFloat(row.cells[3].querySelector('input').value) || 0;
+
+      if (!depth || !qty) {
+        row.querySelector('.channelSize').textContent  = '';
+        row.querySelector('.channelTotal').textContent = '';
+        continue;
+      }
+
+      const size = getChannelSize(depth);
+      const total = qty * 2; // প্রতি drawer এ ২টা channel
+
+      row.querySelector('.channelSize').textContent  = size;
+      row.querySelector('.channelTotal').textContent = total;
+
+      totalChannels += total;
+    }
+
+    document.getElementById('totalChannels').value = totalChannels;
+    const price = parseFloat(document.getElementById('channelPrice').value) || 0;
+    document.getElementById('channelAmount').value = (totalChannels * price).toFixed(2);
+  }
+
+  /* ---------- PROFILE EDGE / HANDLE SECTION ---------- */
+  function addProfileRow(tableId) {
+    const tbody = document.querySelector('#' + tableId + ' tbody');
+    const tr = document.createElement('tr');
+    const rowCount = tbody.rows.length + 1;
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="text" value="Part ${rowCount}" /></td>
+      <td><input type="number" value="" step="0.1" /></td>
+      <td><input type="number" value="" step="0.1" /></td>
+      <td><input type="number" value="1" step="1" min="1" /></td>
+      <td class="areaPer"></td>
+      <td class="areaTotal"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function calcProfile(tableId, totalSftId, amountId, priceId) {
+    const tbody = document.querySelector('#' + tableId + ' tbody');
+    let totalSft = 0;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row  = tbody.rows[i];
+      const wRaw = parseFloat(row.cells[2].querySelector('input').value) || 0;
+      const hRaw = parseFloat(row.cells[3].querySelector('input').value) || 0;
+      const qty  = parseFloat(row.cells[4].querySelector('input').value) || 0;
+
+      const w = toInch(wRaw);
+      const h = toInch(hRaw);
+
+      if (!w || !h || !qty) {
+        row.querySelector('.areaPer').textContent   = '';
+        row.querySelector('.areaTotal').textContent = '';
+        continue;
+      }
+
+      const areaPerSft   = (w * h) / 144;
+      const areaTotalSft = areaPerSft * qty;
+
+      row.querySelector('.areaPer').textContent   = areaPerSft.toFixed(3);
+      row.querySelector('.areaTotal').textContent = areaTotalSft.toFixed(3);
+
+      totalSft += areaTotalSft;
+    }
+
+    document.getElementById(totalSftId).value = totalSft.toFixed(3);
+
+    const price = parseFloat(document.getElementById(priceId).value) || 0;
+    document.getElementById(amountId).value = (totalSft * price).toFixed(2);
+  }
+
+  /* ---------- ACCESSORIES SECTION ---------- */
+  function addAccessoryRow() {
+    const tbody = document.querySelector('#accessoryTable tbody');
+    const tr = document.createElement('tr');
+    const rowCount = tbody.rows.length + 1;
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="text" value="Item ${rowCount}" /></td>
+      <td><input type="number" value="1" step="1" min="0" /></td>
+      <td><input type="text" value="pcs" /></td>
+      <td><input type="number" value="0" step="0.01" /></td>
+      <td class="amountCell"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function calcAccessories() {
+    const tbody = document.querySelector('#accessoryTable tbody');
+    let total = 0;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row  = tbody.rows[i];
+      const qty  = parseFloat(row.cells[2].querySelector('input').value) || 0;
+      const rate = parseFloat(row.cells[4].querySelector('input').value) || 0;
+      const amt  = qty * rate;
+      row.querySelector('.amountCell').textContent = amt.toFixed(2);
+      total += amt;
+    }
+
+    document.getElementById('accessoryTotal').value = total.toFixed(2);
+  }
+
+  /* ---------- WORKER SECTION ---------- */
+  function addWorkerRow() {
+    const tbody = document.querySelector('#workerTable tbody');
+    const tr = document.createElement('tr');
+    const rowCount = tbody.rows.length + 1;
+    tr.innerHTML = `
+      <td>${rowCount}</td>
+      <td><input type="date" /></td>
+      <td><input type="text" placeholder="e.g. Kitchen cabinet" /></td>
+      <td><input type="number" value="0" step="1" min="0" /></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function calcWorker() {
+    const tbody = document.querySelector('#workerTable tbody');
+    let totalPcs = 0;
+
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const row = tbody.rows[i];
+      const pcs = parseFloat(row.cells[3].querySelector('input').value) || 0;
+      totalPcs += pcs;
+    }
+
+    const boardsFromCalc = parseFloat(document.getElementById('boardsFromCalc').value) || 0;
+
+    // যদি নিচে কিছু লিখা না থাকে, Part A থেকে আসা board সংখ্যাই effective হিসেবে ধরা হবে
+    const effectiveBoards = totalPcs > 0 ? totalPcs : boardsFromCalc;
+
+    document.getElementById('workerTotalPcs').value = effectiveBoards;
+    const rate = parseFloat(document.getElementById('workerRate').value) || 0;
+    document.getElementById('workerAmount').value = (effectiveBoards * rate).toFixed(2);
+  }
+
+  /* ============================
+     Client-wise Cabinet Manager
+  ============================ */
+  const CW_STORAGE_KEY = 'chowchala_clients_v1';
+  let cwClients = [];
+  let cwCurrentClientId = null;
+
+  function cwLoadFromStorage() {
+    try {
+      const raw = localStorage.getItem(CW_STORAGE_KEY);
+      if (!raw) { cwClients = []; return; }
+      cwClients = JSON.parse(raw) || [];
+    } catch (e) {
+      console.error('CW load error', e);
+      cwClients = [];
+    }
+  }
+
+  function cwSaveToStorage() {
+    localStorage.setItem(CW_STORAGE_KEY, JSON.stringify(cwClients));
+  }
+
+  function cwRenderClientSelect() {
+    const sel = document.getElementById('cwClientSelect');
+    const totalSpan = document.getElementById('cwTotalClients');
+    if (!sel || !totalSpan) return;
+
+    sel.innerHTML = '';
+    if (!cwClients.length) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No client saved';
+      sel.appendChild(opt);
+      cwCurrentClientId = null;
+      totalSpan.textContent = '0';
+      const sum = document.getElementById('cwClientSummary');
+      if (sum) sum.textContent = 'এখনো কোনো client সেভ করা হয়নি।';
+      cwRenderCabinetList([]);
+      return;
+    }
+
+    cwClients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = (c.name || 'Unnamed') + ' – ' + (c.project || '');
+      sel.appendChild(opt);
+    });
+
+    totalSpan.textContent = String(cwClients.length);
+
+    if (!cwCurrentClientId) cwCurrentClientId = cwClients[0].id;
+    sel.value = cwCurrentClientId;
+
+    cwUpdateClientSummary();
+    const client = cwClients.find(c => c.id === cwCurrentClientId);
+    cwRenderCabinetList(client ? (client.cabinets || []) : []);
+  }
+
+  function cwUpdateClientSummary() {
+    const box = document.getElementById('cwClientSummary');
+    if (!box) return;
+    const client = cwClients.find(c => c.id === cwCurrentClientId);
+    if (!client) {
+      box.textContent = 'কোনো client সিলেক্ট করা নেই।';
+      return;
+    }
+    const totalCab = (client.cabinets || []).length;
+    box.innerHTML =
+      '<b>' + (client.name || 'Unnamed') + '</b><br>' +
+      'Project: ' + (client.project || '-') + '<br>' +
+      'Mobile: ' + (client.mobile || '-') + '<br>' +
+      'Budget: ' + (client.budget ? client.budget + ' Tk' : '-') + '<br>' +
+      'Total cabinets: ' + totalCab;
+  }
+
+  function cwHandleSaveClient() {
+    const name = document.getElementById('cwClientName').value.trim();
+    const project = document.getElementById('cwProjectName').value.trim();
+    const mobile = document.getElementById('cwMobile').value.trim();
+    const budget = parseFloat(document.getElementById('cwBudget').value) || null;
+
+    if (!name && !project) {
+      alert('কমপক্ষে Client Name অথবা Project Name দিন।');
+      return;
+    }
+
+    let client = cwCurrentClientId
+      ? cwClients.find(c => c.id === cwCurrentClientId)
+      : null;
+
+    if (!client) {
+      client = {
+        id: 'c_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+        name,
+        project,
+        mobile,
+        budget,
+        cabinets: []
+      };
+      cwClients.push(client);
+      cwCurrentClientId = client.id;
+    } else {
+      client.name = name;
+      client.project = project;
+      client.mobile = mobile;
+      client.budget = budget;
+    }
+
+    cwSaveToStorage();
+    cwRenderClientSelect();
+    alert('Client তথ্য সেভ হয়েছে।');
+  }
+
+  function cwHandleClientChange(e) {
+    cwCurrentClientId = e.target.value || null;
+    cwUpdateClientSummary();
+    const client = cwClients.find(c => c.id === cwCurrentClientId);
+    cwRenderCabinetList(client ? (client.cabinets || []) : []);
+  }
+
+  function cwRenderCabinetList(cabinets) {
+    const container = document.getElementById('cwCabinetList');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!cabinets || !cabinets.length) {
+      container.textContent = 'এই client-এর জন্য এখনো কোনো cabinet সেভ করা হয়নি।';
+      return;
+    }
+
+    cabinets.forEach((cab, index) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'cabinet-item';
+
+      const header = document.createElement('div');
+      header.className = 'cabinet-item-header';
+
+      const left = document.createElement('div');
+      left.innerHTML =
+        '<span class="cabinet-tag">Cabinet ' + (index + 1) + ':</span> ' +
+        (cab.label || '-');
+
+      const right = document.createElement('div');
+      right.className = 'cabinet-type';
+      right.textContent =
+        cab.type === 'wardrobe'
+          ? 'Cloth / Wardrobe'
+          : (cab.type === 'kitchen' ? 'Kitchen cabinet' : 'Other');
+
+      header.appendChild(left);
+      header.appendChild(right);
+      wrap.appendChild(header);
+
+      const meta = document.createElement('div');
+      meta.className = 'cabinet-meta';
+      meta.innerHTML =
+        'Notes: ' + (cab.note || '-') + '<br>' +
+        'Created: ' + (cab.created || '-');
+      wrap.appendChild(meta);
+
+      container.appendChild(wrap);
+    });
+  }
+
+  function cwHandleAddCabinet() {
+    const client = cwClients.find(c => c.id === cwCurrentClientId);
+    if (!client) {
+      alert('আগে একটা client সিলেক্ট করুন (বা নতুন client সেভ করুন)।');
+      return;
+    }
+    const type = document.getElementById('cwCabType').value;
+    const label = document.getElementById('cwCabLabel').value.trim();
+    const note = document.getElementById('cwCabNote').value.trim();
+
+    if (!label) {
+      alert('Cabinet / Room Name লিখুন।');
+      return;
+    }
+
+    if (!client.cabinets) client.cabinets = [];
+    client.cabinets.push({
+      id: 'cab_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+      type,
+      label,
+      note,
+      created: new Date().toLocaleString()
+    });
+
+    cwSaveToStorage();
+    cwRenderCabinetList(client.cabinets);
+    cwUpdateClientSummary();
+    alert('Cabinet এই client-এর সাথে সেভ হয়েছে।');
+  }
+
+  function cwHandleExportCsv() {
+    if (!cwClients.length) {
+      alert('Export করার মতো কোনো data নেই।');
+      return;
+    }
+    const lines = [];
+    lines.push('clientName,projectName,mobile,budget,cabinetType,cabinetLabel,cabinetNote');
+    cwClients.forEach(c => {
+      const base = [
+        (c.name || '').replace(/,/g, ' '),
+        (c.project || '').replace(/,/g, ' '),
+        (c.mobile || '').replace(/,/g, ' '),
+        c.budget != null ? String(c.budget) : ''
+      ];
+      if (!c.cabinets || !c.cabinets.length) {
+        lines.push(base.concat(['','','']).join(','));
+      } else {
+        c.cabinets.forEach(cab => {
+          const row = base.concat([
+            cab.type || '',
+            (cab.label || '').replace(/,/g, ' '),
+            (cab.note || '').replace(/,/g, ' ')
+          ]);
+          lines.push(row.join(','));
+        });
+      }
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'chowchala_clients_cabinets.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function cwParseCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (!lines.length) return [];
+    const rows = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (i === 0 && line.toLowerCase().includes('clientname')) {
+        continue; // header skip
+      }
+      const parts = line.split(',');
+      while (parts.length < 7) parts.push('');
+      const [
+        clientName,
+        projectName,
+        mobile,
+        budgetRaw,
+        cabType,
+        cabLabel,
+        cabNote
+      ] = parts.map(p => p.trim());
+      rows.push({
+        clientName,
+        projectName,
+        mobile,
+        budget: budgetRaw ? parseFloat(budgetRaw) || null : null,
+        cabType: cabType || 'wardrobe',
+        cabLabel,
+        cabNote
+      });
+    }
+    return rows;
+  }
+
+  function cwImportFromRows(rows, mode) {
+    if (!rows.length) return;
+    if (mode === 'replace') {
+      cwClients = [];
+    }
+
+    rows.forEach(r => {
+      let client = cwClients.find(
+        c => (c.name || '') === r.clientName && (c.project || '') === r.projectName
+      );
+      if (!client) {
+        client = {
+          id: 'c_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          name: r.clientName,
+          project: r.projectName,
+          mobile: r.mobile,
+          budget: r.budget,
+          cabinets: []
+        };
+        cwClients.push(client);
+      }
+      if (r.cabLabel) {
+        client.cabinets.push({
+          id: 'cab_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          type: r.cabType || 'wardrobe',
+          label: r.cabLabel,
+          note: r.cabNote,
+          created: new Date().toLocaleString()
+        });
+      }
+    });
+
+    cwSaveToStorage();
+    cwRenderClientSelect();
+    alert('CSV data import সম্পন্ন হয়েছে।');
+  }
+
+  function cwHandleImportCsv(mode) {
+    const input = document.getElementById('cwImportFile');
+    if (!input || !input.files || !input.files.length) {
+      alert('একটা CSV ফাইল সিলেক্ট করুন।');
+      return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const rows = cwParseCsv(e.target.result || '');
+        cwImportFromRows(rows, mode);
+      } catch (err) {
+        console.error(err);
+        alert('CSV ফাইল ঠিকভাবে পড়া যায়নি।');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+
+  function exportAllData() {
+    const lines = [];
+
+    // ===== Section 1: Client + Cabinet =====
+    lines.push("Section,ClientName,ProjectName,Mobile,Budget,CabinetType,CabinetLabel,CabinetNote");
+
+    if (Array.isArray(cwClients) && cwClients.length) {
+      cwClients.forEach(c => {
+        const base = [
+          (c.name || "").replace(/,/g, " "),
+          (c.project || "").replace(/,/g, " "),
+          (c.mobile || "").replace(/,/g, " "),
+          c.budget != null ? String(c.budget) : ""
+        ];
+
+        if (!c.cabinets || !c.cabinets.length) {
+          lines.push(["ClientCabinet"].concat(base, ["","",""]).join(","));
+        } else {
+          c.cabinets.forEach(cab => {
+            const row = base.concat([
+              cab.type || "",
+              (cab.label || "").replace(/,/g, " "),
+              (cab.note || "").replace(/,/g, " ")
+            ]);
+            lines.push(["ClientCabinet"].concat(row).join(","));
+          });
+        }
+      });
+    }
+
+    // ===== Section 2: Board Settings =====
+    lines.push("");
+    lines.push("Section,BoardWidthInput,BoardHeightInput,GlobalUnit");
+    const bwInput = document.getElementById("boardWidth");
+    const bhInput = document.getElementById("boardHeight");
+    const unitVal = getUnit();
+    const bwVal = bwInput ? bwInput.value : "";
+    const bhVal = bhInput ? bhInput.value : "";
+    lines.push(["BoardSettings", bwVal, bhVal, unitVal].join(","));
+
+    // ===== Section 3: Cut List (Parts) =====
+    lines.push("");
+    lines.push("Section,PartName,WidthInch,HeightInch,Qty,AreaPerSqft,AreaTotalSqft");
+    const partsBody = document.querySelector("#partsTable tbody");
+    if (partsBody) {
+      for (let i = 0; i < partsBody.rows.length; i++) {
+        const row = partsBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const wStr = row.cells[2]?.querySelector("input")?.value || "";
+        const hStr = row.cells[3]?.querySelector("input")?.value || "";
+        const qStr = row.cells[4]?.querySelector("input")?.value || "";
+
+        const w = parseFloat(wStr) || 0;
+        const h = parseFloat(hStr) || 0;
+        const q = parseFloat(qStr) || 0;
+
+        let areaPer = "";
+        let areaTotal = "";
+        if (w > 0 && h > 0 && q > 0) {
+          areaPer = (w * h / 144).toFixed(3);
+          areaTotal = (w * h * q / 144).toFixed(3);
+        }
+
+        lines.push([
+          "CutList",
+          (name || "").replace(/,/g, " "),
+          wStr,
+          hStr,
+          qStr,
+          areaPer,
+          areaTotal
+        ].join(","));
+      }
+    }
+
+    // ===== Section 4: Door Hinges =====
+    lines.push("");
+    lines.push("Section,DoorName,DoorHeightInput,Qty,HingesPerDoor,TotalHingesRow");
+    const doorBody = document.querySelector("#doorTable tbody");
+    if (doorBody) {
+      for (let i = 0; i < doorBody.rows.length; i++) {
+        const row = doorBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const hStr = row.cells[2]?.querySelector("input")?.value || "";
+        const qStr = row.cells[3]?.querySelector("input")?.value || "";
+        const hInch = toInch(parseFloat(hStr) || 0);
+        const qty = parseFloat(qStr) || 0;
+        let per = "";
+        let total = "";
+        if (hInch > 0 && qty > 0) {
+          per = getHingesByHeight(hInch);
+          total = per * qty;
+        }
+        lines.push([
+          "DoorHinges",
+          (name || "").replace(/,/g, " "),
+          hStr,
+          qStr,
+          per,
+          total
+        ].join(","));
+      }
+    }
+
+    // ===== Section 5: Drawer Channels =====
+    lines.push("");
+    lines.push("Section,DrawerName,DrawerDepthInput,Qty,ChannelSizeInch,TotalChannelsRow");
+    const drawerBody = document.querySelector("#drawerTable tbody");
+    if (drawerBody) {
+      for (let i = 0; i < drawerBody.rows.length; i++) {
+        const row = drawerBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const dStr = row.cells[2]?.querySelector("input")?.value || "";
+        const qStr = row.cells[3]?.querySelector("input")?.value || "";
+        const dInch = toInch(parseFloat(dStr) || 0);
+        const qty = parseFloat(qStr) || 0;
+        let size = "";
+        let totalCh = "";
+        if (dInch > 0 && qty > 0) {
+          size = getChannelSize(dInch);
+          totalCh = qty * 2;
+        }
+        lines.push([
+          "DrawerChannel",
+          (name || "").replace(/,/g, " "),
+          dStr,
+          qStr,
+          size,
+          totalCh
+        ].join(","));
+      }
+    }
+
+    // ===== Section 6: Profile Edging =====
+    lines.push("");
+    lines.push("Section,PartName,WidthInput,HeightInput,Qty,AreaPerSft,AreaTotalSft");
+    const edgeBody = document.querySelector("#edgeTable tbody");
+    if (edgeBody) {
+      for (let i = 0; i < edgeBody.rows.length; i++) {
+        const row = edgeBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const wStr = row.cells[2]?.querySelector("input")?.value || "";
+        const hStr = row.cells[3]?.querySelector("input")?.value || "";
+        const qStr = row.cells[4]?.querySelector("input")?.value || "";
+        const wIn = toInch(parseFloat(wStr) || 0);
+        const hIn = toInch(parseFloat(hStr) || 0);
+        const qty = parseFloat(qStr) || 0;
+        let areaPer = "";
+        let areaTotal = "";
+        if (wIn > 0 && hIn > 0 && qty > 0) {
+          areaPer = (wIn * hIn / 144).toFixed(3);
+          areaTotal = (wIn * hIn * qty / 144).toFixed(3);
+        }
+        lines.push([
+          "ProfileEdging",
+          (name || "").replace(/,/g, " "),
+          wStr,
+          hStr,
+          qStr,
+          areaPer,
+          areaTotal
+        ].join(","));
+      }
+    }
+
+    // ===== Section 7: Profile Handle =====
+    const handleBody = document.querySelector("#handleTable tbody");
+    if (handleBody && handleBody.rows.length) {
+      lines.push("");
+      lines.push("Section,PartName,WidthInput,HeightInput,Qty,AreaPerSft,AreaTotalSft");
+      for (let i = 0; i < handleBody.rows.length; i++) {
+        const row = handleBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const wStr = row.cells[2]?.querySelector("input")?.value || "";
+        const hStr = row.cells[3]?.querySelector("input")?.value || "";
+        const qStr = row.cells[4]?.querySelector("input")?.value || "";
+        const wIn = toInch(parseFloat(wStr) || 0);
+        const hIn = toInch(parseFloat(hStr) || 0);
+        const qty = parseFloat(qStr) || 0;
+        let areaPer = "";
+        let areaTotal = "";
+        if (wIn > 0 && hIn > 0 && qty > 0) {
+          areaPer = (wIn * hIn / 144).toFixed(3);
+          areaTotal = (wIn * hIn * qty / 144).toFixed(3);
+        }
+        lines.push([
+          "ProfileHandle",
+          (name || "").replace(/,/g, " "),
+          wStr,
+          hStr,
+          qStr,
+          areaPer,
+          areaTotal
+        ].join(","));
+      }
+    }
+
+    // ===== Section 8: Accessories =====
+    lines.push("");
+    lines.push("Section,ItemName,Qty,Unit,RateTk,AmountTk");
+    const accBody = document.querySelector("#accessoryTable tbody");
+    if (accBody) {
+      for (let i = 0; i < accBody.rows.length; i++) {
+        const row = accBody.rows[i];
+        const name = row.cells[1]?.querySelector("input")?.value || "";
+        const qStr = row.cells[2]?.querySelector("input")?.value || "";
+        const unitStr = row.cells[3]?.querySelector("input")?.value || "";
+        const rateStr = row.cells[4]?.querySelector("input")?.value || "";
+        const qty = parseFloat(qStr) || 0;
+        const rate = parseFloat(rateStr) || 0;
+        const amt = (qty * rate).toFixed(2);
+        lines.push([
+          "Accessories",
+          (name || "").replace(/,/g, " "),
+          qStr,
+          unitStr,
+          rateStr,
+          amt
+        ].join(","));
+      }
+    }
+
+    // ===== Section 9: Worker / Boards =====
+    lines.push("");
+    lines.push("Section,Date,Details,PiecesBoards");
+    const workerBody = document.querySelector("#workerTable tbody");
+    if (workerBody) {
+      for (let i = 0; i < workerBody.rows.length; i++) {
+        const row = workerBody.rows[i];
+        const dStr = row.cells[1]?.querySelector("input")?.value || "";
+        const noteStr = row.cells[2]?.querySelector("input")?.value || "";
+        const pcsStr = row.cells[3]?.querySelector("input")?.value || "";
+        lines.push([
+          "WorkerDay",
+          dStr,
+          (noteStr || "").replace(/,/g, " "),
+          pcsStr
+        ].join(","));
+      }
+    }
+
+    // Summary row for worker payment
+    const boardsFromCalc = document.getElementById("boardsFromCalc")?.value || "";
+    const workerRate = document.getElementById("workerRate")?.value || "";
+    const workerTotalPcs = document.getElementById("workerTotalPcs")?.value || "";
+    const workerAmount = document.getElementById("workerAmount")?.value || "";
+    lines.push("");
+    lines.push("Section,BoardsFromPartA,WorkerRateTk,EffectiveBoardsForPayment,WorkerTotalAmountTk");
+    lines.push([
+      "WorkerSummary",
+      boardsFromCalc,
+      workerRate,
+      workerTotalPcs,
+      workerAmount
+    ].join(","));
+
+    const blob = new Blob([lines.join("\\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chowchala_interior_all_data.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function cwInitClientManager() {
+    cwLoadFromStorage();
+    cwRenderClientSelect();
+
+    const saveBtn = document.getElementById('cwSaveClientBtn');
+    if (saveBtn) saveBtn.addEventListener('click', cwHandleSaveClient);
+
+    const sel = document.getElementById('cwClientSelect');
+    if (sel) sel.addEventListener('change', cwHandleClientChange);
+
+    const addCabBtn = document.getElementById('cwAddCabinetBtn');
+    if (addCabBtn) addCabBtn.addEventListener('click', cwHandleAddCabinet);
+
+    const expBtn = document.getElementById('cwExportCsvBtn');
+    if (expBtn) expBtn.addEventListener('click', cwHandleExportCsv);
+
+    const allExpBtn = document.getElementById('exportAllBtn');
+    if (allExpBtn) allExpBtn.addEventListener('click', exportAllData);
+
+
+    const addImportBtn = document.getElementById('cwImportAddBtn');
+    if (addImportBtn) addImportBtn.addEventListener('click', function() {
+      cwHandleImportCsv('add');
+    });
+
+    const repImportBtn = document.getElementById('cwImportReplaceBtn');
+    if (repImportBtn) repImportBtn.addEventListener('click', function() {
+      cwHandleImportCsv('replace');
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    cwInitClientManager();
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    drawCabinet2D();
+  });
+
+
+  // Simple Service Worker registration for PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.log('SW registration failed:', err);
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
