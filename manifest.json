@@ -1,0 +1,22 @@
+{
+  "name": "Chowchala Interior Calculator",
+  "short_name": "Interior Calc",
+  "description": "Cabinet board কাটিং, auto cut list + Wall panel & strip হিসাব – সব একসাথে।",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050711",
+  "theme_color": "#c62828",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
