@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wall Panel + Strip Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#050711" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:#050711;
+      color:#f5f5f5;
+      max-width:1100px;
+      margin:20px auto 40px;
+      padding:0 16px;
+    }
+    header{text-align:center;margin-bottom:16px;}
+    h1{font-size:24px;margin-bottom:4px;}
+    .brand{color:#ff9800;}
+    .subtitle{font-size:13px;color:#aaa;}
+    h2{font-size:18px;margin-bottom:8px;}
+    h3{font-size:15px;margin:10px 0 6px;}
+    .card{
+      background:#12121e;
+      border-radius:10px;
+      padding:14px 18px 16px;
+      margin-bottom:16px;
+      border:1px solid #2a2738;
+      box-shadow:0 0 25px rgba(0,0,0,.45);
+    }
+    .flex{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+    .flex>div{flex:1 1 200px;min-width:200px;}
+    label{display:block;font-size:13px;margin-bottom:3px;}
+    input[type="number"],select{
+      width:100%;padding:6px 8px;border-radius:6px;
+      border:1px solid #333246;background:#181827;
+      color:#f5f5f5;font-size:13px;
+    }
+    input::placeholder{color:#777;}
+    input:focus,select:focus{
+      outline:none;border-color:#ff9800;
+      box-shadow:0 0 0 1px rgba(255,152,0,.25);
+    }
+    .btn{
+      display:inline-block;padding:7px 16px;font-size:13px;
+      font-weight:600;border-radius:999px;border:none;
+      cursor:pointer;margin-top:6px;margin-right:6px;
+      letter-spacing:.3px;
+    }
+    .btn.primary{background:linear-gradient(90deg,#ff9800,#ff5722);color:#fff;}
+    .btn.secondary{background:#27293d;color:#f5f5f5;}
+    .btn:hover{opacity:.9;}
+    .note{font-size:11px;color:#9e9e9e;margin-top:3px;}
+    .results{font-size:13px;margin-top:6px;}
+    .results p{margin:2px 0;}
+    .results strong{color:#ffd54f;}
+    .highlight-box{
+      margin-top:8px;padding:8px 10px;border-radius:8px;
+      background:#181827;border:1px solid #333246;font-size:12px;
+    }
+    .two-col-result{display:flex;flex-wrap:wrap;gap:10px;}
+    .two-col-result>div{flex:1 1 260px;min-width:240px;}
+    footer{text-align:center;font-size:11px;color:#777;margin-top:10px;}
+
+    .sheet-wrapper{margin-top:10px;}
+    .nesting-controls{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+      margin-bottom:6px;font-size:12px;
+    }
+    .sheet-box{
+      margin-top:10px;padding:10px;border-radius:10px;
+      background:#181827;border:1px solid #333246;font-size:12px;
+    }
+    .sheet-header{margin-bottom:8px;font-weight:600;}
+    .sheet-canvas{
+      position:relative;
+      width:260px;   /* 4ft scaled */
+      height:540px;  /* 8ft scaled, bigger */
+      background:#fafafa;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size:26px 26px;
+      border-radius:4px;overflow:hidden;
+      border:1px solid #ccc;
+      margin-bottom:6px;
+    }
+    .piece-rect{
+      position:absolute;border:1px solid rgba(0,0,0,.25);
+      font-size:10px;line-height:1.2;text-align:center;
+      overflow:hidden;padding:2px;color:#111;
+    }
+    .sheet-footer{margin-top:4px;font-size:11px;color:#c0c0c0;}
+    .legend{margin-top:6px;font-size:11px;}
+    .legend span{
+      display:inline-block;padding:3px 8px;border-radius:4px;
+      margin-right:4px;margin-bottom:2px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1><span class="brand">Wall Panel</span> + Strip Calculator</h1>
+  <p class="subtitle">
+    12mm front panel + 18mm 2&quot;/4&quot; strip, সাথে Nesting summary এবং 4'×8' vertical Sheet layout।
+  </p>
+</header>
+
+<section class="card">
+  <h2>১) Panel Area</h2>
+  <div class="flex">
+    <div>
+      <label>Input Unit</label>
+      <select id="unit">
+        <option value="ft" selected>Feet (10 = 10')</option>
+        <option value="inch">Inch</option>
+      </select>
+    </div>
+    <div>
+      <label>Panel Width</label>
+      <input type="number" id="panelW" value="10" step="0.1" />
+    </div>
+    <div>
+      <label>Panel Height / Span</label>
+      <input type="number" id="panelH" value="10" step="0.1" />
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>২) Panel Front (12mm) + 18mm Strip Grid</h2>
+  <div class="flex">
+    <div>
+      <label>Base Strip Width (inch)</label>
+      <input type="number" id="baseStripW" value="2" step="0.1" />
+      <div class="note">সবসময় inch (২ / ৩ / ৪ ইত্যাদি)।</div>
+    </div>
+    <div>
+      <label>Depth Strip Width (inch)</label>
+      <input type="number" id="depthStripW" value="4" step="0.1" />
+    </div>
+    <div>
+      <label>Grid Spacing X (ft বা inch)</label>
+      <input type="number" id="gridX" value="1" step="0.1" />
+      <div class="note">উপরের Unit অনুযায়ী; ১ft দিলে প্রতি ১২&quot; gap।</div>
+    </div>
+    <div>
+      <label>Grid Spacing Y</label>
+      <input type="number" id="gridY" value="1" step="0.1" />
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>৩) হিসাব</h2>
+  <button class="btn primary" onclick="calculateAll()">📐 হিসাব করুন</button>
+  <button class="btn secondary" onclick="clearResults()">🧹 Clear</button>
+
+  <div id="resultBox" class="results"></div>
+
+  <div class="sheet-wrapper" id="sheetWrapper">
+    <div class="nesting-controls">
+      <span><b>Nesting Preview Mode:</b></span>
+      <label><input type="radio" name="nestMode" value="summary" checked> Summary Only</label>
+      <label><input type="radio" name="nestMode" value="strip"> Strip Only (2&quot;/4&quot;)</label>
+    </div>
+    <div id="sheetContainer"></div>
+    <div class="legend">
+      <span style="background:#ffeb99;">Base Strip</span>
+      <span style="background:#ffd480;">Depth Strip</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <small>৮'×৪' board ধরে approx হিসাব; সাইটে কাটিং wastage / joint অনুযায়ী সামান্য পার্থক্য হবে।</small>
+</footer>
+
+<script>
+  const SHEET_W = 96;  // inches (8')
+  const SHEET_H = 48;  // inches (4')
+  const SHEET_AREA = SHEET_W * SHEET_H;
+
+  function getUnit(){return document.getElementById('unit').value || 'ft';}
+  function toInch(v){
+    v = parseFloat(v) || 0;
+    if(!v) return 0;
+    return getUnit()==='inch' ? v : v*12;
+  }
+  function r2(x){return Math.round(x*100)/100;}
+
+  function calcPanelAndStrips(){
+    const W=toInch(document.getElementById('panelW').value);
+    const H=toInch(document.getElementById('panelH').value);
+    if(!W||!H){
+      return{
+        frontAreaInch2:0,frontSqft:0,frontBoards:0,
+        baseStripBoards:0,baseStripAreaInch2:0,
+        depthStripBoards:0,depthStripAreaInch2:0,
+        baseStripCount:0,depthStripCount:0,
+        basePieces:[],depthPieces:[],
+        baseStripW:0,depthStripW:0
+      };
+    }
+
+    const frontArea=W*H;
+    const frontSqft=frontArea/144;
+    const frontBoards=Math.ceil(frontArea/SHEET_AREA);
+
+    const baseStripW=parseFloat(document.getElementById('baseStripW').value)||0;
+    const depthStripW=parseFloat(document.getElementById('depthStripW').value)||0;
+    const gridX=toInch(document.getElementById('gridX').value);
+    const gridY=toInch(document.getElementById('gridY').value);
+
+    let baseStripBoards=0,baseStripAreaInch2=0,baseStripCount=0,basePieces=[];
+    let depthStripBoards=0,depthStripAreaInch2=0,depthStripCount=0,depthPieces=[];
+
+    if(baseStripW>0 && gridX>0 && gridY>0){
+      const vLines=Math.floor(W/gridX)+1;
+      const hLines=Math.floor(H/gridY)+1;
+      const baseLen=vLines*H + hLines*W;    // সব horizontal + vertical strip length
+      const stripLen=SHEET_W;              // ৮' লম্বা strip
+      baseStripCount=Math.ceil(baseLen/stripLen);
+      const stripsPerBoardBase=Math.floor(SHEET_H/baseStripW)||1;
+      baseStripBoards=Math.ceil(baseStripCount/stripsPerBoardBase);
+      baseStripAreaInch2=baseStripCount*stripLen*baseStripW;
+      for(let i=0;i<baseStripCount;i++){
+        basePieces.push({w:stripLen,h:baseStripW,type:'baseStrip',label:baseStripW+'"'});
+      }
+    }
+
+    if(depthStripW>0 && gridX>0){
+      const vLines=Math.floor(W/gridX)+1;
+      const depthLen=vLines*H;             // শুধু vertical depth strip
+      const stripLen=SHEET_W;
+      depthStripCount=Math.ceil(depthLen/stripLen);
+      const stripsPerBoardDepth=Math.floor(SHEET_H/depthStripW)||1;
+      depthStripBoards=Math.ceil(depthStripCount/stripsPerBoardDepth);
+      depthStripAreaInch2=depthStripCount*stripLen*depthStripW;
+      for(let i=0;i<depthStripCount;i++){
+        depthPieces.push({w:stripLen,h:depthStripW,type:'depthStrip',label:depthStripW+'"'});
+      }
+    }
+
+    return{
+      frontAreaInch2:frontArea,
+      frontSqft,frontBoards,
+      baseStripBoards,baseStripAreaInch2,
+      depthStripBoards,depthStripAreaInch2,
+      baseStripCount,depthStripCount,
+      basePieces,depthPieces,
+      baseStripW,depthStripW
+    };
+  }
+
+  function nestingLine(label,usedInch2,boards){
+    if(!boards||!usedInch2)return'';
+    const totalInch2=boards*SHEET_AREA;
+    const extraInch2=Math.max(0,totalInch2-usedInch2);
+    const usedSqft=usedInch2/144;
+    const extraSqft=extraInch2/144;
+    const usedPerBoard=usedInch2/boards;
+    const usedHeightIn=Math.min(SHEET_H,usedPerBoard/SHEET_W);
+    const usedHeightFt=usedHeightIn/12;
+    const extraHeightFt=Math.max(0,4-usedHeightFt);
+    return `<p>• ${label}: ${boards} টি board — used ≈ <strong>${r2(usedSqft)} sq.ft</strong>, extra ≈ <strong>${r2(extraSqft)} sq.ft</strong>. প্রতি বোর্ডে আনুমানিক 8'×${r2(usedHeightFt)}' ব্যবহার, 8'×${r2(extraHeightFt)}' extra।</p>`;
+  }
+
+  function colorForType(t){
+    switch(t){
+      case 'baseStrip':return'#ffeb99';
+      case 'depthStrip':return'#ffd480';
+      default:return'#dddddd';
+    }
+  }
+
+  function buildSheets(pieces){
+    const sheets=[];
+    let current=null;
+    let x=0,y=0,rowH=0;
+
+    function startNewSheet(){
+      if(current && current.rects.length>0){
+        sheets.push(current);
+      }
+      current = {rects:[],usedArea:0};
+      x=0;y=0;rowH=0;
+    }
+
+    if(!pieces.length) return sheets;
+    startNewSheet();
+
+    for(const p0 of pieces){
+      let w=p0.w,h=p0.h;
+      if(w<=0 || h<=0) continue;
+      if(w>96 || h>48){
+        if(h<=96 && w<=48){[w,h]=[h,w];}
+        else continue;
+      }
+      if(x+w>96){x=0;y+=rowH;rowH=0;}
+      if(y+h>48){startNewSheet();}
+      current.rects.push({x,y,w,h,type:p0.type,label:`${p0.label} ${r2(w)}×${r2(h)}`});
+      current.usedArea+=w*h;
+      x+=w;if(h>rowH)rowH=h;
+    }
+    if(current && current.rects.length>0) sheets.push(current);
+    return sheets;
+  }
+
+  function renderSheets(pieces){
+    const container=document.getElementById('sheetContainer');
+    container.innerHTML='';
+    if(!pieces.length){
+      container.innerHTML='<div class="note">Nesting preview দেখানোর মতো কোনও strip নেই।</div>';
+      return;
+    }
+    const sheets=buildSheets(pieces);
+
+    // vertical orientation: X axis = 4ft (0–48), Y axis = 8ft (0–96)
+    const scaleX = 260 / SHEET_H; // 48
+    const scaleY = 540 / SHEET_W; // 96
+
+    sheets.forEach((sheet,idx)=>{
+      const usedSqft=sheet.usedArea/144;
+      const usedPercent=SHEET_AREA?(sheet.usedArea/SHEET_AREA*100):0;
+      const box=document.createElement('div');
+      box.className='sheet-box';
+      const header=document.createElement('div');
+      header.className='sheet-header';
+      header.textContent=`Sheet ${idx+1} – Used: ${r2(usedSqft)} sft / 32.00 sft (${r2(usedPercent)}% used)`;
+      box.appendChild(header);
+      const canvas=document.createElement('div');
+      canvas.className='sheet-canvas';
+
+      sheet.rects.forEach(rect=>{
+        const div=document.createElement('div');
+        div.className='piece-rect';
+
+        // rotate 90deg: sheet.x/y (0-96,0-48) map to (0-48,0-96)
+        const newX = rect.y * scaleX;
+        const newY = rect.x * scaleY;
+        const newW = rect.h * scaleX;
+        const newH = rect.w * scaleY;
+
+        div.style.left=newX+'px';
+        div.style.top=newY+'px';
+        div.style.width=newW+'px';
+        div.style.height=newH+'px';
+        div.style.background=colorForType(rect.type);
+        div.textContent=rect.label;
+        canvas.appendChild(div);
+      });
+      box.appendChild(canvas);
+      const footer=document.createElement('div');
+      footer.className='sheet-footer';
+      footer.textContent='Sheet layout (4\'×8\' vertically); বাস্তবে carpenter মাপ সামান্য এদিক-ওদিক করতে পারে।';
+      box.appendChild(footer);
+      container.appendChild(box);
+    });
+  }
+
+  function calculateAll(){
+    const pan=calcPanelAndStrips();
+
+    let html='';
+    html+='<div class="two-col-result">';
+    html+='<div><h3>🧱 Paneling (12mm front)</h3>';
+    if(!pan.frontBoards){
+      html+='<p>Panel front হিসাব নেই / প্রযোজ্য না।</p>';
+    }else{
+      html+=`<p>Front panel area (12mm): <strong>${r2(pan.frontSqft)} sq.ft</strong></p>`;
+      html+=`<p>8'×4' board (12mm front): <strong>${pan.frontBoards} টি</strong></p>`;
+    }
+    html+='</div>';
+
+    html+='<div><h3>📏 18mm Strip</h3>';
+    if(!pan.baseStripBoards && !pan.depthStripBoards){
+      html+='<p>Strip হিসাব নেই / প্রযোজ্য না।</p>';
+    }else{
+      if(pan.baseStripBoards){
+        html+=`<p>Base strip (${pan.baseStripW}" grid): <strong>${pan.baseStripCount} টি strip</strong></p>`;
+        html+=`<p>8'×4' board (18mm base strip): <strong>${pan.baseStripBoards} টি</strong></p>`;
+      }
+      if(pan.depthStripBoards){
+        html+=`<p>Depth strip (${pan.depthStripW}" vertical): <strong>${pan.depthStripCount} টি strip</strong></p>`;
+        html+=`<p>8'×4' board (18mm depth strip): <strong>${pan.depthStripBoards} টি</strong></p>`;
+      }
+    }
+    html+='</div></div>';
+
+    const total18Boards=pan.baseStripBoards+pan.depthStripBoards;
+    const used18Inch2=pan.baseStripAreaInch2+pan.depthStripAreaInch2;
+    const total12Boards=pan.frontBoards;
+    const used12Inch2=pan.frontAreaInch2;
+
+    html+='<div class="highlight-box">';
+    html+='<p><b>মোট Board Summary (8\'×4\'):</b></p>';
+    html+=`<p>18mm board (সব strip): <strong>${total18Boards} টি</strong></p>`;
+    html+=`<p>12mm front panel board: <strong>${total12Boards} টি</strong></p>`;
+    html+='</div>';
+
+    html+='<div class="highlight-box"><p><b>Nesting Summary (৮\'×X\'):</b></p>';
+    html+=nestingLine(`18mm – base strip (${pan.baseStripW}")`,pan.baseStripAreaInch2,pan.baseStripBoards);
+    html+=nestingLine(`18mm – depth strip (${pan.depthStripW}")`,pan.depthStripAreaInch2,pan.depthStripBoards);
+    html+=nestingLine('18mm – মোট strip',used18Inch2,total18Boards);
+    html+=nestingLine('12mm – front panel',used12Inch2,total12Boards);
+    html+='</div>';
+
+    document.getElementById('resultBox').innerHTML=html;
+
+    const modeRadio=document.querySelector('input[name="nestMode"]:checked')?.value||'summary';
+    let pieces=[];
+    if(modeRadio==='strip'){
+      pieces=[...pan.basePieces,...pan.depthPieces];
+    }else{
+      pieces=[];
+    }
+    renderSheets(pieces);
+  }
+
+  function clearResults(){
+    document.getElementById('resultBox').innerHTML='';
+    document.getElementById('sheetContainer').innerHTML='';
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('input[name="nestMode"]').forEach(r=>{
+      r.addEventListener('change',()=>calculateAll());
+    });
+  });
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
+    });
+  }
+</script>
+</body>
+</html>
